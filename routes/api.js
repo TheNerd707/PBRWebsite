@@ -3,6 +3,8 @@ const router = express.Router();
 const Roleplay = require("../schemas/roleplays");
 const userDB = require("../schemas/user");
 
+const { EmbedBuilder, WebhookClient } = require("discord.js");
+
 router.get("/activeRPs", async (req, res) => {
 
   try {
