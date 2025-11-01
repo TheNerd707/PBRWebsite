@@ -154,7 +154,7 @@ app.use((req, res) => {
 
 // Database connection and server start
 (async () => {
-  mongoose.connect("mongodb://pi:27017/dev").catch(console.error);
+  mongoose.connect("mongodb://pi:27017/pbr").catch(console.error);
 })();
 
 app.listen(PORT, async () => {
