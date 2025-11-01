@@ -150,9 +150,9 @@ router.get("/roleplay/:id", async (req, res) => {
     }
   }
   for (const late of rpData.participants.late) {
-    const participantData = await getUserDataFromBot(late);
+    const participantData = await getUserDataFromBot(late.userId);
     if (participantData) {
-      people[late] = participantData.name;
+      people[late.userId] = participantData.name;
     }
   }
   

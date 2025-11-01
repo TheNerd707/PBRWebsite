@@ -4,6 +4,9 @@ const chalk = require("chalk");
 
 async function discordOauth(code) {
     try {
+      const redirectURI = process.env.NODE_ENV === "development"
+        ? "http://localhost:3000/o-auth/"
+        : "https://projectblackrose.org/o-auth/";
         const tokenResponseData = await request(
       "https://discord.com/api/oauth2/token",
       {
@@ -13,7 +16,7 @@ async function discordOauth(code) {
           client_secret: process.env.clientSecret,
           grant_type: "authorization_code",
           code,
-          redirect_uri: "https://projectblackrose.org/o-auth/",
+          redirect_uri: redirectURI,
           scope: "identify email guilds",
         }).toString(),
         headers: {

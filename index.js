@@ -114,6 +114,9 @@ app.get("/o-auth", async (req, res) => {
       return res.redirect("/members");
     });
   } else {
+    if (process.env.NODE_ENV === "development") {
+      return res.redirect("https://discord.com/oauth2/authorize?client_id=1190867838735483022&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fo-auth%2F&scope=identify+guilds+email");
+    }
     res.redirect(
       `https://discord.com/oauth2/authorize?client_id=1190867838735483022&response_type=code&redirect_uri=https%3A%2F%2Fprojectblackrose.org%2Fo-auth%2F&scope=identify+guilds+email`
     );
@@ -153,8 +156,15 @@ app.use((req, res) => {
 });
 
 // Database connection and server start
+let dbURL = "mongodb://pi:27017/";
+if (process.env.NODE_ENV === "development") {
+  console.log("Using development database");
+  dbURL += "dev";
+} else {
+  dbURL += "pbr";
+}
 (async () => {
-  mongoose.connect("mongodb://pi:27017/pbr").catch(console.error);
+  mongoose.connect(dbURL).catch(console.error);
 })();
 
 app.listen(PORT, async () => {

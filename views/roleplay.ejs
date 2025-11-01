@@ -413,12 +413,13 @@
       allPlayers.push(person);
     } 
     for (const player of rp.participants.late) {
-      const name = rp.people[player.userId];
+      const id = player.userId ?? player.id ?? player;
+      const name = people[id]
       const person = {
-        id: player.userId,
+        id: id,
         name: name,
-        time: player.time,
-      }
+        time: player.time || "N/A",
+      };
       allPlayers.push(person);
     }
     for (const playerId of rp.participants.attendance.cops) {
