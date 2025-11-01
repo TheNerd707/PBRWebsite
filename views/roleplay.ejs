@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="head">
+      <div class="menuButton" onclick="change(this)">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+      </div>
+      <div class="PBRHead">PROJECT BLACK ROSE</div>
+      <img src="/public/files/PBR_WHITE_NO_TXT.png" class="logo" alt="" />
+    </div>
+    <div class="menu">
+      <div class="lineMenu"></div>
+      <div class="aboutMenu textMenu">About Us</div>
+      <div class="lineMenu"></div>
+      <div class="applyMenu textMenu">Apply</div>
+      <div class="lineMenu"></div>
+      <div class="membersMenu textMenu">Members</div>
+      <div class="lineMenu"></div>
+      <div class="cadMenu textMenu">Our CAD</div>
+      <div class="lineMenu"></div>
+      <div class="galleryMenu textMenu">Gallery</div>
+      <div class="lineMenu"></div>
+      <div class="contactMenu textMenu">Contact Us</div>
+      <div class="lineMenu"></div>
+      <div class="discordMenu textMenu">Discord</div>
+      <div class="lineMenu"></div>
+    </div>
+    <div class="activeHead">Active Roleplay</div>
+    <div class="activeUnderLine"></div>
+    <div class="sideBox">
+      <div class="hosts">
+        <div class="hostHeader">Host(s)</div>
+        <% for (const host of rp.hostNames) { %>
+        <div class="host"><%= host %></div>
+        <% } %>
+      </div>
+      <div class="location">
+        <div class="locationHeader">Location</div>
+        <div class="locationText"><%= rp.location %></div>
+      </div>
+      <div class="time">
+        <div class="timeHeader">Start Time</div>
+        <!-- prettier-ignore -->
+        <% 
+          const tsNumber = Number(rp.timestamp) || 0;
+          const date = new Date(tsNumber > 1e12 ? tsNumber : tsNumber * 1000);
+          const options = { hour: '2-digit', minute: '2-digit' };
+          const formatted = date.toLocaleTimeString(undefined, options);
+        %>
+        <div class="startTime"><%= formatted %></div>
+      </div>
+    </div>
+
+    <div class="playersBox">
+      <div class="playerHeader">Players</div>
+      <div class="playersSideBox">
+        <div class="total">
+          <div class="totalText">Total</div>
+          <div class="totalNumber">?</div>
+        </div>
+        <div class="leo">
+          <div class="leoText">LEO</div>
+          <div class="leoNumber"><%= rp.participants.attendance.cops.length %></div>
+        </div>
+        <div class="SAFR">
+          <div class="safrText">SAFR</div>
+          <div class="safrNumber"><%= rp.participants.attendance.safr.length %></div>
+        </div>
+        <div class="civ">
+          <div class="civText">CIV</div>
+          <div class="civNumber"><%= rp.participants.attendance.civilians.length %></div>
+        </div>
+      </div>
+      <div class="players"></div>
+    </div>
+    <div class="rp" style="display: none;">
+      <%= JSON.stringify(rp) %>
+    </div>
+    <div class="people" style="display: none;">
+      <%= JSON.stringify(people) %>
+    </div>
+  </body>
+  <style>
+    html {
+      margin: -7px;
+      padding: 0;
+      scrollbar-width: 0px; /* For Firefox */
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #000000;
+      color: #ffffff;
+      font-family: "Montserrat";
+      overflow-x: hidden;
+    }
+    .head {
+      margin: 0;
+      left: 0;
+      width: 100%;
+      height: 5vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: fixed;
+      top: 0;
+      z-index: 10;
+    }
+    .PBRHead {
+      font-size: 2.5vw;
+      margin-left: 1vw;
+      font-weight: 400;
+      cursor: pointer;
+      font-family: "Montserrat", sans-serif;
+    }
+    .logo {
+      width: 4vw;
+      height: 4vw;
+      margin-right: 1vw;
+      cursor: pointer;
+    }
+    .menuButton {
+      display: inline-block;
+      cursor: pointer;
+      margin: 0 calc(35.841 * 100vw / 1920);
+      z-index: 1;
+    }
+    .bar1,
+    .bar2,
+    .bar3 {
+      width: calc(57.628 * 100vw / 1920);
+      height: calc(2.8 * 100vw / 1920) !important;
+      background-color: white;
+      margin: calc(12.29868 * 100vw / 1920) 0;
+    }
+    .change .bar1 {
+      transform: translate(0, calc(14.2 * 100vw / 1920)) rotate(-45deg);
+    }
+    /* Fade out the second bar */
+    .change .bar2 {
+      opacity: 0;
+    }
+    /* Rotate last bar */
+    .change .bar3 {
+      transform: translate(0, calc(-14.2 * 100vw / 1920)) rotate(45deg);
+    }
+    .menu {
+      padding-top: calc(50 * 100vw / 1366);
+      position: fixed;
+      display: flex;
+      flex-direction: column;
+      background-color: rgba(0, 0, 0, 0.9);
+      width: calc(200 * 100vw / 1366);
+      height: calc(378 * 100vw / 1366);
+      top: calc(80 * 100vw / 1920);
+      left: -400px;
+      transition: left 0.5s ease-in-out;
+      z-index: 1000;
+    }
+    .lineMenu {
+      width: calc(125 * 100vw / 1366);
+      height: calc(3 * 100vw / 1920);
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: none;
+      margin: 0 auto;
+    }
+    .textMenu {
+      font-size: calc(20 * 100vw / 1366);
+      text-align: center;
+      width: 100%;
+      font-family: "DM Sans", sans-serif;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 400;
+      margin-top: calc(10 * 100vw / 1366);
+      margin-bottom: calc(10 * 100vw / 1366);
+      cursor: pointer;
+    }
+    .activeHead {
+      font-size: 3vw;
+      margin-top: 6vw;
+      margin-left: 2vw;
+      font-family: "DM Sans", sans-serif;
+      width: 100%;
+      text-align: center;
+    }
+    .activeUnderLine {
+      margin-top: 2vw;
+      position: absolute;
+      width: 35vw;
+      height: 0.1vw;
+      background-color: #ffffff;
+      left: 50%;
+      transform: translateX(-42%);
+    }
+    .sideBox {
+      position: absolute;
+      top: 17.5vw;
+      left: 5vw;
+      width: 10vw;
+      height: 13.3vw;
+      box-sizing: border-box;
+      z-index: 1;
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 1vw;
+      padding-left: 2vw;
+    }
+    .hostHeader,
+    .locationHeader,
+    .timeHeader {
+      font-size: 1.3vw;
+      margin-bottom: 0.5vw;
+      font-weight: 600;
+      font-family: "DM Sans", sans-serif;
+      margin-top: 0.5vw;
+      margin-bottom: 0.3vw;
+    }
+    .host,
+    .locationText,
+    .startTime {
+      color: white;
+      font-family: "DM Sans", sans-serif;
+      font-weight: 400;
+      font-size: 1.3vw;
+      margin-top: -0.3vw;
+    }
+    .playersBox {
+      position: absolute;
+      top: 17.5vw;
+      right: 5vw;
+      width: 75vw;
+      height: 25vw;
+      box-sizing: border-box;
+      z-index: 1;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    .playerHeader {
+      width: 100%;
+      height: 3vw;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "DM Sans", sans-serif;
+      font-size: 2vw;
+      border-bottom: #ffffff 0.1vw solid;
+    }
+    .playersSideBox {
+      position: absolute;
+      width: 12.5%;
+      height: calc(100% - 3vw);
+      box-sizing: border-box;
+      padding-left: 1vw;
+      padding-top: 0.5vw;
+      border-right: #ffffff 0.1vw solid;
+    }
+    .totalText,
+    .leoText,
+    .safrText,
+    .civText {
+      font-family: "DM Sans", sans-serif;
+      font-size: 1vw;
+    }
+    .totalNumber,
+    .leoNumber,
+    .safrNumber,
+    .civNumber {
+      font-family: "DM Sans", sans-serif;
+      font-size: 3vw;
+      margin-top: -0.4vw;
+    }
+    .totalNumber {
+      font-size: 4vw;
+    }
+    .players {
+      position: absolute;
+      left: 12.5%;
+      width: 87.5%;
+      height: calc(100% - 3vw);
+      box-sizing: border-box;
+      font-family: "DM Sans", sans-serif;
+      font-size: 1.5vw;
+      padding: 0.5vw;
+      overflow-y: auto;
+    }
+    .player {
+      display: flex;
+      align-items: center;
+      background-color: black;
+      margin-bottom: 0.5vw;
+      padding-bottom: 0.3vw;
+      padding-top: 0.3vw;
+      padding-left: 3%;
+      height: 12.5%;
+    }
+    .action {
+      position: absolute;
+      right: 0;
+      text-align: center;
+      cursor: pointer;
+      border-left: white 0.1vw solid;
+      width: 17.5%;
+      font-size: 1.6vw;
+      padding-top: 0.5vw;
+      padding-bottom: 0.5vw;
+    }
+    .playerTime {
+      position: absolute;
+      right: calc(17.5%);
+      width: 15%;
+      text-align: center;
+      border-left: white 0.1vw solid;
+      font-size: 1.6vw;
+      padding-top: 0.5vw;
+      padding-bottom: 0.5vw;
+    }
+    .role {
+      position: absolute;
+      right: calc(17.5% + 15%);
+      width: 10%;
+      text-align: center;
+      border-left: white 0.1vw solid;
+      font-size: 1.6vw;
+      padding-top: 0.5vw;
+      padding-bottom: 0.5vw;
+    }
+  </style>
+  <script>
+    function change(x) {
+      const bar1 = document.querySelector(".bar1");
+      const bar2 = document.querySelector(".bar2");
+      const bar3 = document.querySelector(".bar3");
+
+      bar1.style.transition = "0.4s";
+      bar2.style.transition = "0.4s";
+      bar3.style.transition = "0.4s";
+      x.classList.toggle("change");
+      const menu = document.querySelector(".menu");
+      if (menu.style.left === "0px") {
+        menu.style.left = "-400px";
+      } else {
+        menu.style.left = "0px";
+      }
+      setTimeout(() => {
+        bar1.style.transition = "none";
+        bar2.style.transition = "none";
+        bar3.style.transition = "none";
+      }, 400);
+    }
+    const textMenus = document.querySelectorAll(".textMenu");
+    textMenus.forEach((textMenu) => {
+      textMenu.addEventListener("click", () => {
+        const menuClass = textMenu.classList[0];
+        const urlMap = {
+          aboutMenu: "/about",
+          applyMenu: "/apply",
+          membersMenu: "/members",
+          cadMenu: "https://cad.simpleway.com",
+          galleryMenu: "/gallery",
+          contactMenu: "/contact",
+          discordMenu: "/apply", // Replace with your actual Discord link
+        };
+        const url = urlMap[menuClass];
+
+        if (url) {
+          window.open(url, "_self");
+        }
+      });
+    });
+    const home = document.querySelector(".logo");
+    home.addEventListener("click", () => {
+      window.open("/", "_self");
+    });
+  </script>
+  <script>
+    // Style fixer
+    const sideBox = document.querySelector(".sideBox");
+    // idk how I did this, i dont even know what Array.from does ngl
+    const hosts = Array.from(document.querySelectorAll(".host")).map((h) =>
+      h.textContent.trim()
+    );
+    const hostCount = hosts.length;
+    sideBox.style.height = `${13.5 - 1.1 + hostCount * 1.1}vw`;
+  </script>
+  <script>
+    //This script calculates the total number of players and adds them to the list, it will be complicated because of some things.
+    const rp = JSON.parse(document.querySelector(".rp").textContent.trim());
+    document.querySelector(".rp").remove();
+    
+    const people = JSON.parse(document.querySelector(".people").textContent.trim());
+    document.querySelector(".people").remove();
+    
+    const allPlayers = [];
+    const tempNumber = rp.participants.ontime.length + rp.participants.late.length + rp.participants.attendance.cops.length + rp.participants.attendance.safr.length + rp.participants.attendance.civilians.length;
+
+    for (const player of rp.participants.ontime) {
+      const name = people[player];
+      const person = {
+        id: player,
+        name: name,
+        time: (function() {
+          const ts = Number(rp.timestamp) || 0;
+          const d = new Date(ts > 1e12 ? ts : ts * 1000);
+          return d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+        })(),
+      }
+      allPlayers.push(person);
+    } 
+    for (const player of rp.participants.late) {
+      const name = rp.people[player.userId];
+      const person = {
+        id: player.userId,
+        name: name,
+        time: player.time,
+      }
+      allPlayers.push(person);
+    }
+    for (const playerId of rp.participants.attendance.cops) {
+      let temp = false;
+      for (const player of allPlayers) {
+        if (player.id === playerId) {
+          player.role = "LEO";
+          temp = true;
+        }
+      }
+      if (!temp) {
+        const person = {
+          id: 'N/A',
+          name: playerId,
+          time: 'N/A',
+          role: "LEO"
+        }
+        allPlayers.push(person);
+      }
+    }
+    for (const playerId of rp.participants.attendance.safr) {
+      let temp = false;
+      for (const player of allPlayers) {
+        if (player.id === playerId) {
+          player.role = "SAFR";
+          temp = true;
+        }
+      }
+      if (!temp) {
+        const person = {
+          id: 'N/A',
+          name: playerId,
+          time: 'N/A',
+          role: "SAFR"
+        }
+        allPlayers.push(person);
+      }
+    }
+    for (const playerId of rp.participants.attendance.civilians) {
+      let temp = false;
+      for (const player of allPlayers) {
+        if (player.id === playerId) {
+          player.role = "CIV";
+          temp = true;
+        }
+      }
+      if (!temp) {
+        const person = {
+          id: 'N/A',
+          name: playerId,
+          time: 'N/A',
+          role: "CIV"
+        }
+        allPlayers.push(person);
+      }
+    }
+    const playersDiv = document.querySelector(".players");
+    playersDiv.innerHTML = '';
+    for (const playerId in allPlayers) {
+      const player = allPlayers[playerId];
+      const playerDiv = document.createElement("div");
+      playerDiv.classList.add("player");
+
+      const nameDiv = document.createElement("div");
+      nameDiv.classList.add("name");
+      nameDiv.textContent = player.name;
+      playerDiv.appendChild(nameDiv);
+
+      const roleDiv = document.createElement("div");
+      roleDiv.classList.add("role");
+      roleDiv.textContent = player.role || "N/A";
+      playerDiv.appendChild(roleDiv);
+
+      const timeDiv = document.createElement("div");
+      timeDiv.classList.add("playerTime");
+      timeDiv.textContent = player.time;
+      playerDiv.appendChild(timeDiv);
+
+      const actionDiv = document.createElement("div");
+      actionDiv.classList.add("action");
+      actionDiv.textContent = "ACTION";
+      playerDiv.appendChild(actionDiv);
+
+      playersDiv.appendChild(playerDiv);
+    }
+    const totalNumberDiv = document.querySelector(".totalNumber");
+    totalNumberDiv.textContent = Object.keys(allPlayers).length;
+  </script>
+  <script>
+    // Action button functionality
+    const actionButtons = document.querySelectorAll(".action");
+    const actionDiv = document.createElement("div");
+  </script>
+</html>
