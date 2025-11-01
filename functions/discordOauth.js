@@ -13,7 +13,7 @@ async function discordOauth(code) {
           client_secret: process.env.clientSecret,
           grant_type: "authorization_code",
           code,
-          redirect_uri: "http://localhost:3000/o-auth/",
+          redirect_uri: "https://projectblackrose.org/o-auth/",
           scope: "identify email guilds",
         }).toString(),
         headers: {
