@@ -115,7 +115,7 @@ app.get("/o-auth", async (req, res) => {
     });
   } else {
     res.redirect(
-      `https://discord.com/oauth2/authorize?client_id=1190867838735483022&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fo-auth%2F&scope=identify+guilds+email`
+      `https://discord.com/oauth2/authorize?client_id=1190867838735483022&response_type=code&redirect_uri=https%3A%2F%2Fprojectblackrose.org%2Fo-auth%2F&scope=identify+guilds+email`
     );
   }
 });
