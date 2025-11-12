@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Project Black Rose</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="head">
+      <div class="menuButton" onclick="change(this)">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+      </div>
+      <div class="PBRHead">PROJECT BLACK ROSE</div>
+      <img src="/public/files/PBR_WHITE_NO_TXT.png" class="logo" alt="" />
+    </div>
+    <div class="menu">
+      <div class="lineMenu"></div>
+      <div class="aboutMenu textMenu">About Us</div>
+      <div class="lineMenu"></div>
+      <div class="applyMenu textMenu">Apply</div>
+      <div class="lineMenu"></div>
+      <div class="membersMenu textMenu">Members</div>
+      <div class="lineMenu"></div>
+      <div class="cadMenu textMenu">Our CAD</div>
+      <div class="lineMenu"></div>
+      <div class="galleryMenu textMenu">Gallery</div>
+      <div class="lineMenu"></div>
+      <div class="contactMenu textMenu">Contact Us</div>
+      <div class="lineMenu"></div>
+      <div class="discordMenu textMenu">Discord</div>
+      <div class="lineMenu"></div>
+    </div>
+    <div class="activeHead">Active Roleplay</div>
+    <div class="activeUnderLine"></div>
+    <div class="rp" style="display: none"><%= JSON.stringify(rp) %></div>
+    <div class="people" style="display: none">
+      <%= JSON.stringify(people) %>
+    </div>
+    <div class="hosts">
+      <div class="header">Host(s):</div>
+      <div class="hostNames">
+        <%= Array.isArray(rp.hostNames) ? rp.hostNames.join(', ') :
+        (rp.hostNames || '') %>
+      </div>
+    </div>
+    <div class="rpHead">
+      <div class="location">
+        <div class="locationHead">Location</div>
+        <div class="locationName"><%= rp.location %></div>
+      </div>
+      <div class="startTime">
+        <div class="startHead">Start Time</div>
+        <div class="startName">9:00 PM</div>
+      </div>
+      <div class="length">
+        <div class="lengthHead">Length</div>
+        <div class="lengthName">2 Hours</div>
+      </div>
+    </div>
+    <div class="playersHeader">
+      <div class="playersText">Total Players</div>
+      <div class="addBttn" onclick="addPlayer()">ADD+</div>
+    </div>
+    <div class="players">
+      <div class="total">
+        <div class="totalText">Total</div>
+        <div class="totalNumber">?</div>
+      </div>
+      <div class="leo">
+        <div class="leoText">LEO</div>
+        <div class="leoNumber">
+          <%= rp.participants.attendance.cops.length %>
+        </div>
+      </div>
+      <div class="SAFR">
+        <div class="safrText">SAFR</div>
+        <div class="safrNumber">
+          <%= rp.participants.attendance.safr.length %>
+        </div>
+      </div>
+      <div class="civ">
+        <div class="civText">CIV</div>
+        <div class="civNumber">
+          <%= rp.participants.attendance.civilians.length %>
+        </div>
+      </div>
+    </div>
+    <div class="playersDiv"></div>
+    <div class="actionButton" style="display: block">
+      <div class="removeBttn">REMOVE</div>
+      <div class="noteBttn">NOTE</div>
+      <div class="roleBttn">ROLE</div>
+    </div>
+  </body>
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #000000;
+      color: #ffffff;
+      font-family: "Montserrat";
+      overflow-x: hidden;
+      width: 100vw;
+    }
+    .head {
+      display: flex;
+      align-items: center;
+      background-color: #000000;
+      letter-spacing: 0.1em;
+      padding-top: 20px;
+    }
+    .menuButton {
+      position: absolute;
+      display: inline-block;
+      cursor: pointer;
+      z-index: 1;
+      left: 10px;
+    }
+    .bar1,
+    .bar2,
+    .bar3 {
+      width: calc(57.628 * 0.1vw);
+      height: calc(2.7 * 0.15vw) !important;
+      background-color: white;
+      margin: calc(12.29868 * 0.125vw) 0;
+    }
+
+    /* Rotate first bar */
+    .change .bar1 {
+      transform: translate(0, calc(14.2 * 0.13vw)) rotate(-45deg);
+    }
+
+    /* Fade out the second bar */
+    .change .bar2 {
+      opacity: 0;
+    }
+
+    /* Rotate last bar */
+    .change .bar3 {
+      transform: translate(0, calc(-14.2 * 0.13vw)) rotate(45deg);
+    }
+    .line {
+      width: calc(2 * 100vw / 1920);
+      height: calc(80 * 100vw / 1920);
+      background-color: #ffffff;
+      padding: none;
+    }
+    .PBRHead {
+      position: absolute;
+      font-size: 5vw;
+      text-align: center;
+      width: 100vw;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: "Montserrat";
+      font-weight: 400;
+      z-index: 0;
+    }
+    .line2 {
+      position: absolute;
+      width: calc(2 * 100vw / 1920);
+      height: calc(80 * 100vw / 1920);
+      background-color: #ffffff;
+      margin-left: calc((1366 - 95) * 100vw / 1366);
+    }
+    .line3 {
+      position: absolute;
+      width: calc(2 * 100vw / 1920);
+      height: calc(80 * 100vw / 1920);
+      background-color: #ffffff;
+      margin-left: calc((1366 - 95 - 60) * 100vw / 1366);
+    }
+    .logo {
+      position: absolute;
+      width: calc(50 * 0.15vw);
+      height: calc(48 * 0.15vw);
+      right: 10px;
+      cursor: pointer;
+    }
+    .menu {
+      padding-top: calc(50 * 100vw / 1366);
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      background-color: rgba(0, 0, 0, 0.5);
+      width: 80vw;
+      height: calc(378 * 0.215vw);
+      top: 10vw;
+      left: -400px;
+      transition: left 0.5s ease-in-out;
+      z-index: 1000;
+      transform: translateX(-50%);
+    }
+    .textMenu {
+      font-size: calc(20 * 0.3vw);
+      text-align: center;
+      width: 100%;
+      font-family: "Oswald";
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: 100;
+      margin-top: calc(10 * 100vw / 1366);
+      margin-bottom: calc(10 * 100vw / 1366);
+      padding-bottom: 2vw;
+      cursor: pointer;
+      border-bottom: #ffffff 1px solid;
+    }
+    .activeHead {
+      font-size: 8vw;
+      margin-top: 7vw;
+      margin-left: 2vw;
+      font-family: "DM Sans", sans-serif;
+      width: 100%;
+      text-align: center;
+    }
+    .hosts {
+      display: flex;
+      font-size: 4vw;
+      margin-top: 3vw;
+      margin-left: 5vw;
+      font-family: "DM Sans", sans-serif;
+      width: 100%;
+    }
+    .header {
+      font-weight: bold;
+    }
+    .hostNames {
+      margin-left: 1vw;
+      font-weight: normal;
+    }
+    .rpHead {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 5vw;
+      width: 90%;
+      font-family: "DM Sans", sans-serif;
+      background-color: #252725;
+      padding: 3vw 0;
+      margin-left: 50%;
+      transform: translateX(-50%);
+    }
+    .location,
+    .startTime,
+    .length {
+      display: flex;
+    }
+    .locationHead,
+    .startHead,
+    .lengthHead {
+      font-size: 3.5vw;
+      font-weight: bold;
+    }
+    .locationName,
+    .startName,
+    .lengthName {
+      font-size: 3.5vw;
+      padding-left: 0.5vw;
+      font-weight: normal;
+    }
+    .location,
+    .startTime {
+      border-right: #ffffff 1px solid;
+      padding-right: 2.4vw;
+    }
+    .playersHeader {
+      display: flex;
+      font-size: 5vw;
+      margin-top: 3vw;
+      font-family: "DM Sans", sans-serif;
+      width: 100%;
+      margin-left: 50%;
+      transform: translateX(-50%);
+    }
+    .playersText {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+    }
+    .addBttn {
+      margin-left: auto;
+      margin-right: 5vw;
+      font-size: 4vw;
+      background-color: red;
+      color: black;
+      padding: 0.5vw 1.5vw;
+      cursor: pointer;
+      font-weight: bold;
+      z-index: 1000;
+    }
+    .players {
+      display: flex;
+      justify-content: space-around;
+      margin-left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      border-top: #ffffff 1px solid;
+      border-bottom: #ffffff 1px solid;
+      height: 10vw;
+    }
+    .total,
+    .leo,
+    .SAFR,
+    .civ {
+      display: flex;
+      font-family: "DM Sans", sans-serif;
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+    }
+    .totalText,
+    .leoText,
+    .safrText,
+    .civText {
+      font-size: 3.5vw;
+      font-weight: normal;
+      justify-self: center;
+    }
+    .totalNumber,
+    .leoNumber,
+    .safrNumber,
+    .civNumber {
+      font-size: 5vw;
+      padding-left: 1.25vw;
+      font-weight: bold;
+    }
+    .playersDiv {
+      width: 100%;
+    }
+
+    .player {
+      display: flex;
+      align-items: center;
+      background-color: black;
+      font-family: "DM Sans", sans-serif;
+      margin-bottom: 0.5vw;
+      padding-bottom: 0.3vw;
+      padding-top: 0.3vw;
+      padding-left: 3%;
+      height: 12.5%;
+    }
+    .action {
+      position: absolute;
+      right: 0;
+      text-align: center;
+      cursor: pointer;
+      border-left: white 0.1vw solid;
+      width: 20%;
+      padding-top: 0.5vw;
+      padding-bottom: 0.5vw;
+      font-size: 3vw;
+    }
+    .playerTime {
+      position: absolute;
+      right: 20%;
+      width: 15%;
+      text-align: center;
+      border-left: white 0.1vw solid;
+      font-size: 3vw;
+      padding-top: 0.5vw;
+      padding-bottom: 0.5vw;
+    }
+    .role {
+      position: absolute;
+      right: calc(20% + 15%);
+      width: 10%;
+      text-align: center;
+      border-left: white 0.1vw solid;
+      font-size: 3vw;
+      padding-top: 0.5vw;
+      padding-bottom: 0.5vw;
+    }
+    .actionButton {
+      position: absolute;
+      width: calc(20.8vw);
+      display: flex;
+      align-items: center;
+      font-family: "DM Sans", sans-serif;
+      font-size: 3vw;
+      color: white;
+      background-color: black;
+      justify-content: space-around;
+      padding: 0.5vw 0;
+      text-align: center;
+      z-index: 10000;
+      left: -9999px;
+    }
+    .actionButton div {
+      cursor: pointer;
+      height: 5.5vw;
+      margin-bottom: 0.5vw;
+      border-bottom: #ffffff 0.1vw solid;
+      width: 80%;
+      text-align: center;
+      margin-left: 50%;
+      transform: translateX(-50%);
+    }
+    .roleBttn {
+      border-bottom: none !important;
+      margin-bottom: -0.1vw !important;
+    }
+  </style>
+  <script>
+    function change(x) {
+      const bar1 = document.querySelector(".bar1");
+      const bar2 = document.querySelector(".bar2");
+      const bar3 = document.querySelector(".bar3");
+
+      bar1.style.transition = "0.4s";
+      bar2.style.transition = "0.4s";
+      bar3.style.transition = "0.4s";
+      x.classList.toggle("change");
+      const menu = document.querySelector(".menu");
+      if (menu.style.left === "50vw") {
+        menu.style.left = "-400px";
+      } else {
+        menu.style.left = "50vw";
+      }
+      setTimeout(() => {
+        bar1.style.transition = "none";
+        bar2.style.transition = "none";
+        bar3.style.transition = "none";
+      }, 400);
+    }
+    const textMenus = document.querySelectorAll(".textMenu");
+    textMenus.forEach((textMenu) => {
+      textMenu.addEventListener("click", () => {
+        const menuClass = textMenu.classList[0];
+        const urlMap = {
+          aboutMenu: "/about",
+          applyMenu: "/apply",
+          membersMenu: "/members",
+          cadMenu: "https://cad.simpleway.com",
+          galleryMenu: "/gallery",
+          contactMenu: "/contact",
+          discordMenu: "/apply", // Replace with your actual Discord link
+        };
+        const url = urlMap[menuClass];
+
+        if (url) {
+          window.open(url, "_self");
+        }
+      });
+    });
+    const home = document.querySelector(".logo");
+    home.addEventListener("click", () => {
+      window.open("/", "_self");
+    });
+  </script>
+  <script>
+    const startTimeDiv = document.querySelector(".startName");
+    startTimeDiv.textContent = (function () {
+      const rp = JSON.parse(document.querySelector(".rp").textContent.trim());
+      const ts = Number(rp.timestamp) || 0;
+      const d = new Date(ts > 1e12 ? ts : ts * 1000);
+      return d.toLocaleTimeString(undefined, {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    })();
+    //This script calculates the total number of players and adds them to the list, it will be complicated because of some things.
+    const rp = JSON.parse(document.querySelector(".rp").textContent.trim());
+    document.querySelector(".rp").remove();
+
+    const people = JSON.parse(
+      document.querySelector(".people").textContent.trim()
+    );
+    document.querySelector(".people").remove();
+
+    const allPlayers = [];
+    const tempNumber =
+      rp.participants.ontime.length +
+      rp.participants.late.length +
+      rp.participants.attendance.cops.length +
+      rp.participants.attendance.safr.length +
+      rp.participants.attendance.civilians.length;
+
+    for (const player of rp.participants.ontime) {
+      const name = people[player];
+      const person = {
+        id: player,
+        name: name,
+        time: (function () {
+          const ts = Number(rp.timestamp) || 0;
+          const d = new Date(ts > 1e12 ? ts : ts * 1000);
+          return d.toLocaleTimeString(undefined, {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+        })(),
+      };
+      allPlayers.push(person);
+    }
+    for (const player of rp.participants.late) {
+      const id = player.userId ?? player.id ?? player;
+      const name = people[id];
+      const person = {
+        id: id,
+        name: name,
+        time: player.time || "N/A",
+      };
+      allPlayers.push(person);
+    }
+    for (const playerId of rp.participants.attendance.cops) {
+      let temp = false;
+      for (const player of allPlayers) {
+        if (player.id === playerId) {
+          player.role = "LEO";
+          temp = true;
+          break;
+        }
+      }
+      if (!temp) {
+        const person = {
+          id: playerId,
+          name: playerId,
+          time: "N/A",
+          role: "LEO",
+          random: true,
+        };
+        allPlayers.push(person);
+      }
+    }
+    for (const playerId of rp.participants.attendance.safr) {
+      let temp = false;
+      for (const player of allPlayers) {
+        if (player.id === playerId) {
+          player.role = "SAFR";
+          temp = true;
+          break;
+        }
+      }
+      if (!temp) {
+        const person = {
+          id: playerId,
+          name: playerId,
+          time: "N/A",
+          role: "SAFR",
+          random: true,
+        };
+        allPlayers.push(person);
+      }
+    }
+    for (const playerId of rp.participants.attendance.civilians) {
+      let temp = false;
+      for (const player of allPlayers) {
+        if (player.id === playerId) {
+          player.role = "CIV";
+          temp = true;
+          break;
+        }
+      }
+      if (!temp) {
+        const person = {
+          id: playerId,
+          name: playerId,
+          time: "N/A",
+          role: "CIV",
+          random: true,
+        };
+        allPlayers.push(person);
+      }
+    }
+    const playersDiv = document.querySelector(".playersDiv");
+    playersDiv.innerHTML = "";
+    for (const playerId in allPlayers) {
+      const player = allPlayers[playerId];
+      const playerDiv = document.createElement("div");
+      playerDiv.id = player.id;
+
+      playerDiv.classList.add("player");
+      if (player.random) {
+        playerDiv.style.backgroundColor = "#ff0000";
+        playerDiv.style.color = "black";
+      }
+
+      const nameDiv = document.createElement("div");
+      nameDiv.classList.add("name");
+      nameDiv.textContent = player.name || "N/A";
+      playerDiv.appendChild(nameDiv);
+
+      const roleDiv = document.createElement("div");
+      roleDiv.classList.add("role");
+      roleDiv.textContent = player.role || "N/A";
+      playerDiv.appendChild(roleDiv);
+      if (player.random) {
+        roleDiv.style.borderLeft = "black 0.1vw solid";
+      }
+
+      const timeDiv = document.createElement("div");
+      timeDiv.classList.add("playerTime");
+      timeDiv.textContent = player.time;
+      playerDiv.appendChild(timeDiv);
+      if (player.random) {
+        timeDiv.style.borderLeft = "black 0.1vw solid";
+      }
+
+      const actionDiv = document.createElement("div");
+      actionDiv.classList.add("action");
+      actionDiv.textContent = "ACTION";
+      playerDiv.appendChild(actionDiv);
+      if (player.random) {
+        actionDiv.style.borderLeft = "black 0.1vw solid";
+      }
+
+      playersDiv.appendChild(playerDiv);
+    }
+    const totalNumberDiv = document.querySelector(".totalNumber");
+    totalNumberDiv.textContent = Object.keys(allPlayers).length;
+  </script>
+  <script>
+    // Add player functionality
+    let addPlayerDiv = null;
+    function addPlayer() {
+      if (addPlayerDiv) {
+        addPlayerDiv.remove();
+        addPlayerDiv = null;
+        return;
+      }
+
+      const addDiv = document.createElement("div");
+      addPlayerDiv = addDiv;
+      addDiv.style.position = "fixed";
+      addDiv.style.top = "50%";
+      addDiv.style.left = "50%";
+      addDiv.style.transform = "translate(-50%, -50%)";
+      addDiv.style.backgroundColor = "rgba(0, 0, 0, 0.9)";
+      addDiv.style.padding = "2vw";
+      addDiv.style.zIndex = "10000";
+      addDiv.innerHTML = `
+    <form action="/api/rp/add-player" method="post">
+      <div style="margin-bottom: 2vw;">
+      <input type="hidden" name="rpId" value="<%= rp.id %>">
+      </div>
+      <div style="margin-bottom: 1vw;">
+      <label for="playerName" style="font-family: 'DM Sans', sans-serif; color: white; font-size: 4.5vw;">Player Name:</label>
+      </div>
+      <div style="margin-bottom: 1.5vw;">
+      <input type="text" id="playerName" name="playerName" style="font-family: 'DM Sans', sans-serif; font-size: 4vw; padding: 1.2vw; width: 85vw; max-width: 600px;" />
+      </div>
+      <div style="margin-bottom: 1vw;">
+      <label for="playerRole" style="font-family: 'DM Sans', sans-serif; color: white; font-size: 4.5vw;">Player Role:</label>
+      </div>
+      <div style="margin-bottom: 1.5vw;">
+      <select id="playerRole" name="playerRole" style="font-family: 'DM Sans', sans-serif; font-size: 4vw; padding: 1.2vw; width: 85vw; max-width: 600px;">
+        <option value="LEO">LEO</option>
+        <option value="SAFR">SAFR</option>
+        <option value="CIV">CIV</option>
+      </select>
+      </div>
+      <div style="display: flex; justify-content: space-between; gap: 2vw; flex-wrap: wrap;">
+      <div id="addPlayerBtn" style="cursor: pointer; background-color: #00ff00; padding: 1.2vw 2vw; font-size: 4vw; font-family: 'DM Sans', sans-serif; flex: 1; text-align: center; border-radius: 0.8vw; min-width: 30%;">ADD</div>
+      <div id="cancelAddPlayerBtn" style="cursor: pointer; background-color: #ff0000; padding: 1.2vw 2vw; font-size: 4vw; font-family: 'DM Sans', sans-serif; flex: 1; text-align: center; border-radius: 0.8vw; min-width: 30%;">CANCEL</div>
+      </div>
+    </form>
+    `;
+      document.body.appendChild(addDiv);
+      document
+        .getElementById("cancelAddPlayerBtn")
+        .addEventListener("click", () => {
+          addDiv.remove();
+          addPlayerDiv = null;
+        });
+      document.getElementById("addPlayerBtn").addEventListener("click", () => {
+        const playerName = document.getElementById("playerName").value;
+        if (playerName.trim() === "") {
+          alert("Player name cannot be empty.");
+          return;
+        }
+        const playerRole = document.getElementById("playerRole").value;
+        if (!["LEO", "SAFR", "CIV"].includes(playerRole)) {
+          alert("Invalid player role.");
+          return;
+        }
+        fetch("/api/rp/add-player", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            rpId: "<%= rp.id %>",
+            playerName: playerName,
+            playerRole: playerRole,
+          }),
+        })
+          .then((response) => {
+            if (response.ok) {
+              location.reload();
+            } else {
+              alert("Failed to add player.");
+            }
+          })
+          .catch(() => {
+            alert("Failed to add player.");
+          });
+      });
+    }
+  </script>
+  <script>
+    // Action button functionality
+    const actionButton = document.querySelector(".actionButton");
+    let currentButton = null;
+
+    function closeActionDiv() {
+      actionButton.style.display = "none";
+      if (currentButton) currentButton.textContent = "ACTION";
+      currentButton = null;
+    }
+    document.querySelectorAll(".action").forEach((button) => {
+      button.addEventListener("click", () => {
+        if (currentButton === button) {
+          closeActionDiv();
+          return;
+        }
+        const rect = button.getBoundingClientRect();
+        actionButton.style.top = `${rect.bottom + window.scrollY}px`;
+
+        const offsetPx = window.innerWidth * 0;
+        actionButton.style.left = `${rect.left + window.scrollX - offsetPx}px`;
+        actionButton.style.display = "block";
+        button.textContent = "CANCEL";
+        currentButton = button;
+      });
+    });
+    document
+      .querySelector(".removeBttn")
+      .addEventListener("click", removeActionDiv);
+    document.querySelector(".noteBttn").addEventListener("click", () => {
+      alert("Note functionality not implemented yet.");
+    });
+    document.querySelector(".roleBttn").addEventListener("click", () => {
+      roleActionDiv();
+    });
+
+    async function removeActionDiv() {
+      const playerDiv = currentButton.parentElement;
+      closeActionDiv();
+      await fetch("/api/rp/remove-player", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          rpId: "<%= rp.id %>",
+          player: playerDiv.id,
+        }),
+      })
+        .then((response) => {
+          if (response.status === 400) {
+            alert("Cannot remove server member.");
+            return;
+          }
+          if (!response.ok) {
+            alert("Failed to remove player.");
+          }
+        })
+        .catch(() => {
+          alert("Failed to remove player.");
+        });
+      location.reload();
+    }
+    async function roleActionDiv() {
+      const playerDiv = currentButton.parentElement;
+      const newRole = prompt(
+        "Enter new role for the player (LEO, SAFR, CIV):"
+      )?.toUpperCase();
+      if (!newRole || !["LEO", "SAFR", "CIV"].includes(newRole)) {
+        alert("Invalid role.");
+        return;
+      }
+      closeActionDiv();
+      await fetch("/api/rp/update-player-role", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          rpId: "<%= rp.id %>",
+          player: playerDiv.id,
+          oldRole: playerDiv.querySelector(".role").textContent,
+          newRole: newRole,
+        }),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            alert("Failed to update player role.");
+          }
+        })
+        .catch(() => {
+          alert("Failed to update player role.");
+        });
+      location.reload();
+    }
+  </script>
+</html>

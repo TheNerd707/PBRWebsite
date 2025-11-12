@@ -279,6 +279,13 @@
       font-family: "DM Sans";
       font-weight: 300;
     }
+    .x {
+      position: absolute;
+      top: 1vw;
+      right: 5.5vw;
+      font-size: 1.5vw;
+      cursor: pointer;
+    }
   </style>
   <script>
     function change(x) {
@@ -377,6 +384,7 @@
         </div>
         <div class="linev"></div>
         <div class="details">VIEW MORE DETAILS</div>
+        <div class="x">X</div>
       `;
         rpDiv.querySelector(".details").dataset.id = rp.id;
         rpsContainer.appendChild(rpDiv);
@@ -401,34 +409,112 @@
       statusText = "m";
     }
     clearance.innerText = `Security Clearance: ${statusText}`;
+  </script>
+  <script>
+    document.addEventListener("click", (e) => {
+      if (e.target.classList.contains("x")) {
+        {
+          // prevent multiple overlays
+          if (document.querySelector(".rp-end-overlay")) return;
 
+          const rpDiv = e.target.closest(".rp");
+          const rpId = rpDiv?.querySelector(".details")?.dataset.id ?? null;
+
+          // build overlay
+          const overlay = document.createElement("div");
+          overlay.className = "rp-end-overlay";
+          Object.assign(overlay.style, {
+            position: "fixed",
+            inset: "0",
+            background: "rgba(0,0,0,0.75)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 20000,
+          });
+
+          const modal = document.createElement("div");
+          Object.assign(modal.style, {
+            background: "#0b0b0b",
+            color: "#fff",
+            padding: "2rem",
+            borderRadius: "8px",
+            textAlign: "center",
+            minWidth: "320px",
+            maxWidth: "90%",
+            boxShadow: "0 6px 24px rgba(0,0,0,0.6)",
+          });
+
+          const msg = document.createElement("div");
+          msg.textContent = "Are you sure you'd like to end this RP?";
+          Object.assign(msg.style, { marginBottom: "1.25rem", fontSize: "1.1rem", fontWeight: "600" });
+
+          const btnRow = document.createElement("div");
+          Object.assign(btnRow.style, { display: "flex", gap: "0.75rem", justifyContent: "center" });
+
+          const yesBtn = document.createElement("button");
+          yesBtn.textContent = "Yes";
+          Object.assign(yesBtn.style, {
+            background: "#d9534f",
+            color: "#fff",
+            border: "none",
+            padding: "0.6rem 1rem",
+            borderRadius: "6px",
+            cursor: "pointer",
+          });
+
+          const backBtn = document.createElement("button");
+          backBtn.textContent = "Go Back";
+          Object.assign(backBtn.style, {
+            background: "#4a4a4a",
+            color: "#fff",
+            border: "none",
+            padding: "0.6rem 1rem",
+            borderRadius: "6px",
+            cursor: "pointer",
+          });
+
+          btnRow.appendChild(yesBtn);
+          btnRow.appendChild(backBtn);
+          modal.appendChild(msg);
+          modal.appendChild(btnRow);
+          overlay.appendChild(modal);
+          document.body.appendChild(overlay);
+
+          // remove overlay helper
+          const closeOverlay = () => {
+            if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+          };
+
+          backBtn.addEventListener("click", closeOverlay);
+          overlay.addEventListener("click", (evt) => {
+            if (evt.target === overlay) closeOverlay();
+          });
+
+          yesBtn.addEventListener("click", async () => {
+            yesBtn.disabled = true;
+            backBtn.disabled = true;
+            yesBtn.textContent = "Ending...";
+            try {
+              // send request to server to end RP (adjust endpoint as needed)
+              if (rpId) {
+                await fetch("/api/rp/endRP", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ id: rpId }),
+                });
+              }
+              // remove rp element from DOM
+              if (rpDiv && rpDiv.parentNode) rpDiv.parentNode.removeChild(rpDiv);
+            } catch (err) {
+              console.error(err);
+              alert("Failed to end RP. Try again.");
+            } finally {
+              closeOverlay();
+            }
+          });
+        }
+      }
+    });
   </script>
 </html>
-<div class="rp">
-  <div class="rpImg"></div>
-  <div class="hosts">
-    <div class="hostHeader">Host(s)</div>
-    <div class="host">valiant.vii</div>
-    <div class="host">the_nerd1</div>
-  </div>
-  <div class="linev"></div>
-  <div class="location">
-    <div class="locationHeader">Location</div>
-    <div class="locationText">100</div>
-  </div>
-  <div class="linev"></div>
-  <div class="startTime">
-    <div class="startTimeHeader">Start Time</div>
-    <div class="startTimeText">10:34 PM</div>
-  </div>
-  <div class="linev"></div>
-  <div class="players">
-    <div class="playersHeader">Players</div>
-    <div class="total">135</div>
-    <div class="leo">45</div>
-    <div class="civ">45</div>
-    <div class="safr">45</div>
-  </div>
-  <div class="linev"></div>
-  <div class="details">VIEW MORE DETAILS</div>
-</div>

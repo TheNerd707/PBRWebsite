@@ -33,12 +33,19 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/public", express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 app.set("trust proxy", 1); // Trust Cloudflare's proxy
+app.use((req, res, next) => {
+  const userAgent = req.headers["user-agent"] || "";
+  req.isMobile = /mobile/i.test(userAgent);
+  req.isComputer = !req.isMobile;
+  next();
+});
 
 // Import routes
 const membersRoute = require("./routes/members");
 app.use("/members", membersRoute);
 const apiRoute = require("./routes/api");
 app.use("/api", apiRoute);
+
 
 // Routes
 app.get("/", async (req, res) => {
@@ -47,7 +54,11 @@ app.get("/", async (req, res) => {
     res.render("index", { cookie: true });
     return;
   }
-  res.render("index", { cookie: false });
+  if (req.isComputer) {
+    res.render("index", { cookie: false });
+    return;
+  }
+  res.render("mobile/index", { cookie: false });
 });
 
 app.get("/about", (req, res) => {
@@ -156,7 +167,7 @@ app.use((req, res) => {
 });
 
 // Database connection and server start
-let dbURL = "mongodb://pi:27017/";
+let dbURL = "mongodb://pi.local:27017/";
 if (process.env.NODE_ENV === "development") {
   console.log("Using development database");
   dbURL += "dev";

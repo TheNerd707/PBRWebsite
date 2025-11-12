@@ -48,18 +48,15 @@
       <div class="time">
         <div class="timeHeader">Start Time</div>
         <!-- prettier-ignore -->
-        <% 
-          const tsNumber = Number(rp.timestamp) || 0;
-          const date = new Date(tsNumber > 1e12 ? tsNumber : tsNumber * 1000);
-          const options = { hour: '2-digit', minute: '2-digit' };
-          const formatted = date.toLocaleTimeString(undefined, options);
-        %>
-        <div class="startTime"><%= formatted %></div>
+        <div class="startTime"><%=  %></div>
       </div>
     </div>
 
     <div class="playersBox">
-      <div class="playerHeader">Players</div>
+      <div class="playerHeader">
+        Players
+        <div class="addBtn" onclick="addPlayer()">ADD +</div>
+      </div>
       <div class="playersSideBox">
         <div class="total">
           <div class="totalText">Total</div>
@@ -67,24 +64,33 @@
         </div>
         <div class="leo">
           <div class="leoText">LEO</div>
-          <div class="leoNumber"><%= rp.participants.attendance.cops.length %></div>
+          <div class="leoNumber">
+            <%= rp.participants.attendance.cops.length %>
+          </div>
         </div>
         <div class="SAFR">
           <div class="safrText">SAFR</div>
-          <div class="safrNumber"><%= rp.participants.attendance.safr.length %></div>
+          <div class="safrNumber">
+            <%= rp.participants.attendance.safr.length %>
+          </div>
         </div>
         <div class="civ">
           <div class="civText">CIV</div>
-          <div class="civNumber"><%= rp.participants.attendance.civilians.length %></div>
+          <div class="civNumber">
+            <%= rp.participants.attendance.civilians.length %>
+          </div>
         </div>
       </div>
       <div class="players"></div>
     </div>
-    <div class="rp" style="display: none;">
-      <%= JSON.stringify(rp) %>
-    </div>
-    <div class="people" style="display: none;">
+    <div class="rp" style="display: none"><%= JSON.stringify(rp) %></div>
+    <div class="people" style="display: none">
       <%= JSON.stringify(people) %>
+    </div>
+    <div class="actionButton" style="display: block;">
+      <div class="removeBttn">REMOVE</div>
+      <div class="noteBttn">NOTE</div>
+      <div class="roleBttn">ROLE</div>
     </div>
   </body>
   <style>
@@ -251,6 +257,17 @@
       font-size: 2vw;
       border-bottom: #ffffff 0.1vw solid;
     }
+    .addBtn {
+      position: absolute;
+      right: 1vw;
+      font-size: 1.5vw;
+      font-weight: bold;
+      font-style: italic;
+      cursor: pointer;
+      color: #000000;
+      background-color: #ff0000;
+      padding: 0.3vw 0.6vw;
+    }
     .playersSideBox {
       position: absolute;
       width: 12.5%;
@@ -288,11 +305,14 @@
       font-size: 1.5vw;
       padding: 0.5vw;
       overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: black rgba(255, 255, 255, 0.2);
     }
     .player {
       display: flex;
       align-items: center;
       background-color: black;
+      font-family: 'DM Sans', sans-serif;
       margin-bottom: 0.5vw;
       padding-bottom: 0.3vw;
       padding-top: 0.3vw;
@@ -329,6 +349,35 @@
       font-size: 1.6vw;
       padding-top: 0.5vw;
       padding-bottom: 0.5vw;
+    }
+    .actionButton {
+      position: absolute;
+      width: calc(75vw*0.875*0.168);
+      display: flex;
+      align-items: center;
+      font-family: "DM Sans", sans-serif;
+      font-size: 1.5vw;
+      color: white;
+      background-color: black;
+      justify-content: space-around;
+      padding: 0.5vw 0;
+      text-align: center;
+      z-index: 10000;
+     left: -9999px;
+    }
+    .actionButton div {
+      cursor: pointer;
+      height: 2vw;
+      margin-bottom: 0.5vw;
+      border-bottom: #ffffff 0.1vw solid;
+      width: 80%;
+      text-align: center;
+      margin-left: 50%;
+      transform: translateX(-50%);
+    }
+    .roleBttn {
+      border-bottom: none !important;
+      margin-bottom: -0.1vw !important;
     }
   </style>
   <script>
@@ -389,32 +438,52 @@
     sideBox.style.height = `${13.5 - 1.1 + hostCount * 1.1}vw`;
   </script>
   <script>
+    const startTimeDiv = document.querySelector(".startTime");
+    startTimeDiv.textContent = (function () {
+      const rp = JSON.parse(document.querySelector(".rp").textContent.trim());
+      const ts = Number(rp.timestamp) || 0;
+      const d = new Date(ts > 1e12 ? ts : ts * 1000);
+      return d.toLocaleTimeString(undefined, {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    })();
     //This script calculates the total number of players and adds them to the list, it will be complicated because of some things.
     const rp = JSON.parse(document.querySelector(".rp").textContent.trim());
     document.querySelector(".rp").remove();
-    
-    const people = JSON.parse(document.querySelector(".people").textContent.trim());
+
+    const people = JSON.parse(
+      document.querySelector(".people").textContent.trim()
+    );
     document.querySelector(".people").remove();
-    
+
     const allPlayers = [];
-    const tempNumber = rp.participants.ontime.length + rp.participants.late.length + rp.participants.attendance.cops.length + rp.participants.attendance.safr.length + rp.participants.attendance.civilians.length;
+    const tempNumber =
+      rp.participants.ontime.length +
+      rp.participants.late.length +
+      rp.participants.attendance.cops.length +
+      rp.participants.attendance.safr.length +
+      rp.participants.attendance.civilians.length;
 
     for (const player of rp.participants.ontime) {
       const name = people[player];
       const person = {
         id: player,
         name: name,
-        time: (function() {
+        time: (function () {
           const ts = Number(rp.timestamp) || 0;
           const d = new Date(ts > 1e12 ? ts : ts * 1000);
-          return d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+          return d.toLocaleTimeString(undefined, {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
         })(),
-      }
+      };
       allPlayers.push(person);
-    } 
+    }
     for (const player of rp.participants.late) {
       const id = player.userId ?? player.id ?? player;
-      const name = people[id]
+      const name = people[id];
       const person = {
         id: id,
         name: name,
@@ -428,15 +497,17 @@
         if (player.id === playerId) {
           player.role = "LEO";
           temp = true;
+          break;
         }
       }
       if (!temp) {
         const person = {
-          id: 'N/A',
+          id: playerId,
           name: playerId,
-          time: 'N/A',
-          role: "LEO"
-        }
+          time: "N/A",
+          role: "LEO",
+          random: true,
+        };
         allPlayers.push(person);
       }
     }
@@ -446,15 +517,17 @@
         if (player.id === playerId) {
           player.role = "SAFR";
           temp = true;
+          break;
         }
       }
       if (!temp) {
         const person = {
-          id: 'N/A',
+          id: playerId,
           name: playerId,
-          time: 'N/A',
-          role: "SAFR"
-        }
+          time: "N/A",
+          role: "SAFR",
+          random: true,
+        };
         allPlayers.push(person);
       }
     }
@@ -464,44 +537,61 @@
         if (player.id === playerId) {
           player.role = "CIV";
           temp = true;
+          break;
         }
       }
       if (!temp) {
         const person = {
-          id: 'N/A',
+          id: playerId,
           name: playerId,
-          time: 'N/A',
-          role: "CIV"
-        }
+          time: "N/A",
+          role: "CIV",
+          random: true,
+        };
         allPlayers.push(person);
       }
     }
     const playersDiv = document.querySelector(".players");
-    playersDiv.innerHTML = '';
+    playersDiv.innerHTML = "";
     for (const playerId in allPlayers) {
       const player = allPlayers[playerId];
       const playerDiv = document.createElement("div");
+      playerDiv.id = player.id;
+
       playerDiv.classList.add("player");
+      if (player.random) {
+        playerDiv.style.backgroundColor = "#ff0000";
+        playerDiv.style.color = "black";
+      }
 
       const nameDiv = document.createElement("div");
       nameDiv.classList.add("name");
-      nameDiv.textContent = player.name;
+      nameDiv.textContent = player.name || "N/A";
       playerDiv.appendChild(nameDiv);
 
       const roleDiv = document.createElement("div");
       roleDiv.classList.add("role");
       roleDiv.textContent = player.role || "N/A";
       playerDiv.appendChild(roleDiv);
+      if (player.random) {
+        roleDiv.style.borderLeft = "black 0.1vw solid";
+      }
 
       const timeDiv = document.createElement("div");
       timeDiv.classList.add("playerTime");
       timeDiv.textContent = player.time;
       playerDiv.appendChild(timeDiv);
+      if (player.random) {
+        timeDiv.style.borderLeft = "black 0.1vw solid";
+      }
 
       const actionDiv = document.createElement("div");
       actionDiv.classList.add("action");
       actionDiv.textContent = "ACTION";
       playerDiv.appendChild(actionDiv);
+      if (player.random) {
+        actionDiv.style.borderLeft = "black 0.1vw solid";
+      }
 
       playersDiv.appendChild(playerDiv);
     }
@@ -509,8 +599,193 @@
     totalNumberDiv.textContent = Object.keys(allPlayers).length;
   </script>
   <script>
+    // Add player functionality
+    let addPlayerDiv = null;
+    function addPlayer() {
+      if (addPlayerDiv) {
+        addPlayerDiv.remove();
+        addPlayerDiv = null;
+        return;
+      }
+      
+      const addDiv = document.createElement("div");
+      addPlayerDiv = addDiv;
+      addDiv.style.position = "fixed";
+      addDiv.style.top = "50%";
+      addDiv.style.left = "50%";
+      addDiv.style.transform = "translate(-50%, -50%)";
+      addDiv.style.backgroundColor = "rgba(0, 0, 0, 0.9)";
+      addDiv.style.padding = "2vw";
+      addDiv.style.zIndex = "10000";
+      addDiv.innerHTML = `
+    <form action="/api/rp/add-player" method="post">
+      <div style="margin-bottom: 1vw;">
+        <input type="hidden" name="rpId" value="<%= rp.id %>">
+      </div>
+      <div style="margin-bottom: 0.5vw;">
+        <label for="playerName" style="font-family: 'DM Sans', sans-serif; color: white; font-size: 1.5vw;">Player Name:</label>
+      </div>
+      <div style="margin-bottom: 1vw;">
+        <input type="text" id="playerName" name="playerName" style="font-family: 'DM Sans', sans-serif; font-size: 1.5vw; padding: 0.5vw; width: 20vw;" />
+      </div>
+      <div style="margin-bottom: 0.5vw;">
+        <label for="playerRole" style="font-family: 'DM Sans', sans-serif; color: white; font-size: 1.5vw;">Player Role:</label>
+      </div>
+      <div style="margin-bottom: 1vw;">
+        <select id="playerRole" name="playerRole" style="font-family: 'DM Sans', sans-serif; font-size: 1.5vw; padding: 0.5vw; width: 20vw;">
+          <option value="LEO">LEO</option>
+          <option value="SAFR">SAFR</option>
+          <option value="CIV">CIV</option>
+        </select>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <div id="addPlayerBtn" style="cursor: pointer; background-color: #00ff00; padding: 0.5vw 1vw; font-size: 1.5vw; font-family: 'DM Sans', sans-serif;">ADD</div>
+        <div id="cancelAddPlayerBtn" style="cursor: pointer; background-color: #ff0000; padding: 0.5vw 1vw; font-size: 1.5vw; font-family: 'DM Sans', sans-serif;">CANCEL</div>
+      </div>
+    </form>
+  `;
+      document.body.appendChild(addDiv);
+      document
+        .getElementById("cancelAddPlayerBtn")
+        .addEventListener("click", () => {
+          addDiv.remove();
+          addPlayerDiv = null;
+        });
+      document.getElementById("addPlayerBtn").addEventListener("click", () => {
+        const playerName = document.getElementById("playerName").value;
+        if (playerName.trim() === "") {
+          alert("Player name cannot be empty.");
+          return;
+        }
+        const playerRole = document.getElementById("playerRole").value;
+        if (
+          !["LEO", "SAFR", "CIV"].includes(playerRole)
+        ) {
+          alert("Invalid player role.");
+          return;
+        }
+        fetch("/api/rp/add-player", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            rpId: "<%= rp.id %>",
+            playerName: playerName,
+            playerRole: playerRole,
+          }),
+        })
+          .then((response) => {
+            if (response.ok) {
+              location.reload();
+            } else {
+              alert("Failed to add player.");
+            }
+          })
+          .catch(() => {
+            alert("Failed to add player.");
+          });
+      });
+    }
+  </script>
+  <script>
     // Action button functionality
-    const actionButtons = document.querySelectorAll(".action");
-    const actionDiv = document.createElement("div");
+    const actionButton = document.querySelector(".actionButton");
+    let currentButton = null;
+
+    function closeActionDiv() {
+      actionButton.style.display = "none";
+      if (currentButton) currentButton.textContent = "ACTION";
+      currentButton = null;
+    }
+    document.querySelectorAll(".action").forEach((button) => {
+      button.addEventListener("click", () => {
+        if (currentButton === button) {
+          closeActionDiv();
+          return;
+        } 
+        const rect = button.getBoundingClientRect();
+        actionButton.style.top = `${rect.bottom + window.scrollY}px`;
+
+        const offsetPx = window.innerWidth * 0;
+        actionButton.style.left = `${rect.left + window.scrollX - offsetPx}px`;
+        actionButton.style.display = "block";
+        button.textContent = "CANCEL";
+        currentButton = button;
+      });
+    });
+    document
+      .querySelector(".removeBttn")
+      .addEventListener("click", removeActionDiv);
+    document
+      .querySelector(".noteBttn")
+      .addEventListener("click", () => {
+        alert("Note functionality not implemented yet.");
+      });
+    document
+      .querySelector(".roleBttn")
+      .addEventListener("click", () => {
+        roleActionDiv();
+      });
+
+    async function removeActionDiv() {
+      const playerDiv = currentButton.parentElement;
+      closeActionDiv();
+      await fetch("/api/rp/remove-player", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          rpId: "<%= rp.id %>",
+          player: playerDiv.id,
+        }),
+      })
+        .then((response) => {
+          if (response.status === 400) {
+            alert("Cannot remove server member.");
+            return;
+          }
+          if (!response.ok) {
+            alert("Failed to remove player.");
+          }
+        })
+        .catch(() => {
+          alert("Failed to remove player.");
+        });
+      location.reload();
+    }
+    async function roleActionDiv() {
+      const playerDiv = currentButton.parentElement;
+      const newRole = prompt(
+        "Enter new role for the player (LEO, SAFR, CIV):"
+      )?.toUpperCase();
+      if (!newRole || !["LEO", "SAFR", "CIV"].includes(newRole)) {
+        alert("Invalid role.");
+        return;
+      }
+      closeActionDiv();
+      await fetch("/api/rp/update-player-role", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          rpId: "<%= rp.id %>",
+          player: playerDiv.id,
+          oldRole: playerDiv.querySelector(".role").textContent,
+          newRole: newRole,
+        }),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            alert("Failed to update player role.");
+          }
+        })
+        .catch(() => {
+          alert("Failed to update player role.");
+        });
+      location.reload();
+    }
   </script>
 </html>

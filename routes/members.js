@@ -95,7 +95,11 @@ router.get("/staff", async (req, res) => {
     status: userData.status,
     clan: clan,
   };
+  if (req.isComputer) { 
   res.render("staff", { user: updatedUser });
+  return;
+  }
+  res.render("mobile/staff", { user: updatedUser });
 });
 
 router.get("/roleplay/:id", async (req, res) => {
@@ -155,8 +159,10 @@ router.get("/roleplay/:id", async (req, res) => {
       people[late.userId] = participantData.name;
     }
   }
-  
-  res.render("roleplay", { rp: rpData, user: updatedUser, people });
+  if (req.isComputer) { 
+    return res.render("roleplay", { rp: rpData, user: updatedUser, people });
+  }
+  res.render("mobile/roleplay", { rp: rpData, user: updatedUser, people });
 });
 
 module.exports = router;

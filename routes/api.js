@@ -84,4 +84,6 @@ router.post("/webhook", async (req, res) => {
     res.sendStatus(500);
   }
 });
+
+router.use("/rp", require("./api/rp"));
 module.exports = router;
