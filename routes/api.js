@@ -41,6 +41,7 @@ router.get("/activeRPs", async (req, res) => {
         total: rp.participants.ontime.length + rp.participants.late.length,
       };
       rpData.id = rp._id;
+      rpData.status = rp.status;
       response.push(rpData);
     }
     res.json(response);

@@ -87,7 +87,7 @@
     <div class="people" style="display: none">
       <%= JSON.stringify(people) %>
     </div>
-    <div class="actionButton" style="display: block;">
+    <div class="actionButton" style="display: block">
       <div class="removeBttn">REMOVE</div>
       <div class="noteBttn">NOTE</div>
       <div class="roleBttn">ROLE</div>
@@ -312,7 +312,7 @@
       display: flex;
       align-items: center;
       background-color: black;
-      font-family: 'DM Sans', sans-serif;
+      font-family: "DM Sans", sans-serif;
       margin-bottom: 0.5vw;
       padding-bottom: 0.3vw;
       padding-top: 0.3vw;
@@ -352,7 +352,7 @@
     }
     .actionButton {
       position: absolute;
-      width: calc(75vw*0.875*0.168);
+      width: calc(75vw * 0.875 * 0.168);
       display: flex;
       align-items: center;
       font-family: "DM Sans", sans-serif;
@@ -363,7 +363,7 @@
       padding: 0.5vw 0;
       text-align: center;
       z-index: 10000;
-     left: -9999px;
+      left: -9999px;
     }
     .actionButton div {
       cursor: pointer;
@@ -465,31 +465,52 @@
       rp.participants.attendance.safr.length +
       rp.participants.attendance.civilians.length;
 
-    for (const player of rp.participants.ontime) {
-      const name = people[player];
-      const person = {
-        id: player,
-        name: name,
-        time: (function () {
-          const ts = Number(rp.timestamp) || 0;
+    if (rp.status === "scheduled") {
+      for (const player of rp.participants.ontime) {
+        const name = people[player];
+        const person = {
+          id: player,
+          name: name,
+          time: (function () {
+            const ts = Number(rp.timestamp) || 0;
+            const d = new Date(ts > 1e12 ? ts : ts * 1000);
+            return d.toLocaleTimeString(undefined, {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+          })(),
+        };
+        allPlayers.push(person);
+      }
+      for (const player of rp.participants.late) {
+        const id = player.userId ?? player.id ?? player;
+        const name = people[id];
+        const person = {
+          id: id,
+          name: name,
+          time: player.time || "N/A",
+        };
+        allPlayers.push(person);
+      }
+    } else {
+      for (const playerId of rp.participants.clockedIn) {
+        const id = playerId.userId
+        const name = people[id];
+        const time = (function () {
+          const ts = Number(playerId.time) || 0;
           const d = new Date(ts > 1e12 ? ts : ts * 1000);
           return d.toLocaleTimeString(undefined, {
             hour: "2-digit",
             minute: "2-digit",
           });
-        })(),
-      };
-      allPlayers.push(person);
-    }
-    for (const player of rp.participants.late) {
-      const id = player.userId ?? player.id ?? player;
-      const name = people[id];
-      const person = {
-        id: id,
-        name: name,
-        time: player.time || "N/A",
-      };
-      allPlayers.push(person);
+        })();
+        const person = {
+          id: id,
+          name: name,
+          time: time,
+        };
+        allPlayers.push(person);
+      }
     }
     for (const playerId of rp.participants.attendance.cops) {
       let temp = false;
@@ -607,7 +628,7 @@
         addPlayerDiv = null;
         return;
       }
-      
+
       const addDiv = document.createElement("div");
       addPlayerDiv = addDiv;
       addDiv.style.position = "fixed";
@@ -658,9 +679,7 @@
           return;
         }
         const playerRole = document.getElementById("playerRole").value;
-        if (
-          !["LEO", "SAFR", "CIV"].includes(playerRole)
-        ) {
+        if (!["LEO", "SAFR", "CIV"].includes(playerRole)) {
           alert("Invalid player role.");
           return;
         }
@@ -703,7 +722,7 @@
         if (currentButton === button) {
           closeActionDiv();
           return;
-        } 
+        }
         const rect = button.getBoundingClientRect();
         actionButton.style.top = `${rect.bottom + window.scrollY}px`;
 
@@ -717,16 +736,12 @@
     document
       .querySelector(".removeBttn")
       .addEventListener("click", removeActionDiv);
-    document
-      .querySelector(".noteBttn")
-      .addEventListener("click", () => {
-        alert("Note functionality not implemented yet.");
-      });
-    document
-      .querySelector(".roleBttn")
-      .addEventListener("click", () => {
-        roleActionDiv();
-      });
+    document.querySelector(".noteBttn").addEventListener("click", () => {
+      alert("Note functionality not implemented yet.");
+    });
+    document.querySelector(".roleBttn").addEventListener("click", () => {
+      roleActionDiv();
+    });
 
     async function removeActionDiv() {
       const playerDiv = currentButton.parentElement;

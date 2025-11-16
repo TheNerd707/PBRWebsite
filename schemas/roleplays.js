@@ -10,6 +10,7 @@ const roleplaySchema = new Schema({
       time: { type: String, required: false },
     }],
     absent: { type: Array, required: false },
+    clockedIn: { type: Array, required: false, default: [] },
     attendance: { cops: { type: Array, required: false, default: [] }, civilians: { type: Array, required: false, default: [] }, safr: { type: Array, required: false, default: [] } },
   },
   timestamp: {

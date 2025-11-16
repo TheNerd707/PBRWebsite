@@ -18,6 +18,12 @@ const userSchema = new Schema({
   clan: {
     type: String,
   },
+  timecards: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Timecard",
+    },
+  ],
 });
 
 module.exports = new model("User", userSchema, "user");

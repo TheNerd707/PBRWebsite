@@ -377,7 +377,16 @@
         <div class="linev"></div>
         <div class="players">
           <div class="playersHeader">Players</div>
-          <div class="total">${rp.players.total}</div>
+          ${(() => {
+            if (rp.status === "scheduled") {
+              return `<div class="total">${rp.players.total}</div>`;
+            } else {
+              const leo = Number(rp.players.leo) || 0;
+              const civ = Number(rp.players.civ) || 0;
+              const safr = Number(rp.players.safr) || 0;
+              return `<div class="total">${leo + civ + safr}</div>`;
+            }
+          })()}
           <div class="leo">${rp.players.leo}</div>
           <div class="civ">${rp.players.civ}</div>
           <div class="safr">${rp.players.safr}</div>

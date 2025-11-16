@@ -159,6 +159,16 @@ router.get("/roleplay/:id", async (req, res) => {
       people[late.userId] = participantData.name;
     }
   }
+  if (!rpData.participants.clockedIn) {
+    rpData.participants.clockedIn = [];
+    await rpData.save();
+  }
+  for (const clockedIn of rpData.participants.clockedIn) {
+    const participantData = await getUserDataFromBot(clockedIn.userId);
+    if (participantData) {
+      people[clockedIn.userId] = participantData.name;
+    }
+  }
   if (req.isComputer) { 
     return res.render("roleplay", { rp: rpData, user: updatedUser, people });
   }

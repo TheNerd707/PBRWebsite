@@ -481,32 +481,52 @@
       rp.participants.attendance.cops.length +
       rp.participants.attendance.safr.length +
       rp.participants.attendance.civilians.length;
-
-    for (const player of rp.participants.ontime) {
-      const name = people[player];
-      const person = {
-        id: player,
-        name: name,
-        time: (function () {
-          const ts = Number(rp.timestamp) || 0;
+    if (rp.status === "scheduled") {
+      for (const player of rp.participants.ontime) {
+        const name = people[player];
+        const person = {
+          id: player,
+          name: name,
+          time: (function () {
+            const ts = Number(rp.timestamp) || 0;
+            const d = new Date(ts > 1e12 ? ts : ts * 1000);
+            return d.toLocaleTimeString(undefined, {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+          })(),
+        };
+        allPlayers.push(person);
+      }
+      for (const player of rp.participants.late) {
+        const id = player.userId ?? player.id ?? player;
+        const name = people[id];
+        const person = {
+          id: id,
+          name: name,
+          time: player.time || "N/A",
+        };
+        allPlayers.push(person);
+      }
+    } else {
+      for (const playerId of rp.participants.clockedIn) {
+        const id = playerId.userId
+        const name = people[id];
+        const time = (function () {
+          const ts = Number(playerId.time) || 0;
           const d = new Date(ts > 1e12 ? ts : ts * 1000);
           return d.toLocaleTimeString(undefined, {
             hour: "2-digit",
             minute: "2-digit",
           });
-        })(),
-      };
-      allPlayers.push(person);
-    }
-    for (const player of rp.participants.late) {
-      const id = player.userId ?? player.id ?? player;
-      const name = people[id];
-      const person = {
-        id: id,
-        name: name,
-        time: player.time || "N/A",
-      };
-      allPlayers.push(person);
+        })();
+        const person = {
+          id: id,
+          name: name,
+          time: time,
+        };
+        allPlayers.push(person);
+      }
     }
     for (const playerId of rp.participants.attendance.cops) {
       let temp = false;

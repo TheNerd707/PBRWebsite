@@ -280,12 +280,12 @@
     }
   </style>
   <script>
-     function change(x) {
+    function change(x) {
       const bar1 = document.querySelector(".bar1");
       const bar2 = document.querySelector(".bar2");
       const bar3 = document.querySelector(".bar3");
 
-      bar1.style.transition = "0.4s"; 
+      bar1.style.transition = "0.4s";
       bar2.style.transition = "0.4s";
       bar3.style.transition = "0.4s";
       x.classList.toggle("change");
@@ -315,7 +315,7 @@
           discordMenu: "/apply", // Replace with your actual Discord link
         };
         const url = urlMap[menuClass];
-        
+
         if (url) {
           window.open(url, "_self");
         }
@@ -325,8 +325,8 @@
     home.addEventListener("click", () => {
       window.open("/", "_self");
     });
-    </script>
-    <script>
+  </script>
+  <script>
     //get active rps from server
     async function loadRps(params) {
       const activeRps = await fetch("/api/activeRPs").then((res) => res.json());
@@ -351,10 +351,14 @@
           ${(() => {
             const s = rp.startTime;
             let date = null;
-            const discordTagMatch = typeof s === "string" && s.match(/^<t:(\d+)(?::[fRDt])?>$/);
+            const discordTagMatch =
+              typeof s === "string" && s.match(/^<t:(\d+)(?::[fRDt])?>$/);
             if (discordTagMatch) {
               date = new Date(Number(discordTagMatch[1]) * 1000);
-            } else if (typeof s === "number" || (/^\d+$/.test(String(s)) && String(s).length < 17)) {
+            } else if (
+              typeof s === "number" ||
+              (/^\d+$/.test(String(s)) && String(s).length < 17)
+            ) {
               const num = Number(s);
               date = num > 1e12 ? new Date(num) : new Date(num * 1000);
             } else {
@@ -362,14 +366,26 @@
             }
             const formatted = isNaN(date)
               ? String(s ?? "")
-              : date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit", hour12: true });
-            return '<div class="startTimeText">' + formatted + '</div>';
+              : date.toLocaleTimeString([], {
+                  hour: "numeric",
+                  minute: "2-digit",
+                  hour12: true,
+                });
+            return '<div class="startTimeText">' + formatted + "</div>";
           })()}
         </div>
         <div class="linev"></div>
         <div class="players">
-          <div class="playersHeader">Players</div>
-          <div class="total">${rp.players.total}</div>
+          <div class="playersHeader">Players</div>${(() => {
+            if (rp.status === "scheduled") {
+              return `<div class="total">${rp.players.total}</div>`;
+            } else {
+              const leo = Number(rp.players.leo) || 0;
+              const civ = Number(rp.players.civ) || 0;
+              const safr = Number(rp.players.safr) || 0;
+              return `<div class="total">${leo + civ + safr}</div>`;
+            }
+          })()}
           <div class="leo">${rp.players.leo}</div>
           <div class="civ">${rp.players.civ}</div>
           <div class="safr">${rp.players.safr}</div>
@@ -387,7 +403,7 @@
     }
     loadRps();
 
-    // Import info 
+    // Import info
     const clearance = document.querySelector(".clearance");
     const status = "<%= user.status %>";
     if (status === "a") {
