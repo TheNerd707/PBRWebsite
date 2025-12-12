@@ -280,11 +280,12 @@
       font-weight: 300;
     }
     .x {
-      position: absolute;
-      top: 1vw;
-      right: 5.5vw;
+      margin-left: auto;
       font-size: 1.5vw;
       cursor: pointer;
+      align-self: flex-start;
+      margin-right: -1.2vw;
+      margin-top: -1.5vw;
     }
   </style>
   <script>
@@ -395,10 +396,10 @@
         <div class="details">VIEW MORE DETAILS</div>
         <div class="x">X</div>
       `;
-        rpDiv.querySelector(".details").dataset.id = rp.id;
+        rpDiv.dataset.rpId = rp.id;
         rpsContainer.appendChild(rpDiv);
         rpDiv.querySelector(".details").addEventListener("click", (e) => {
-          const rpId = e.target.dataset.id;
+          const rpId = e.target.dataset.rpId || e.target.closest(".rp").dataset.rpId;
           window.open(`/members/roleplay/${rpId}`, "_self");
         });
       });
@@ -427,8 +428,8 @@
           if (document.querySelector(".rp-end-overlay")) return;
 
           const rpDiv = e.target.closest(".rp");
-          const rpId = rpDiv?.querySelector(".details")?.dataset.id ?? null;
-
+          const rpId = rpDiv?.dataset.rpId ?? null;
+          console.log("Ending RP ID:", rpId);
           // build overlay
           const overlay = document.createElement("div");
           overlay.className = "rp-end-overlay";
